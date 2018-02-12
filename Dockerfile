@@ -13,10 +13,14 @@ ARG SBT_BINARY_ARCHIVE_NAME=sbt-$SBT_VERSION
 ARG SBT_BINARY_DOWNLOAD_URL=https://dl.bintray.com/sbt/native-packages/sbt/${SBT_VERSION}/${SBT_BINARY_ARCHIVE_NAME}.tgz
 
 # Spark related variables.
-ARG SPARK_VERSION=2.2.0
-ARG SPARK_BINARY_ARCHIVE_NAME=spark-${SPARK_VERSION}-bin-hadoop2.7
-ARG SPARK_BINARY_DOWNLOAD_URL=http://d3kbcqa49mib13.cloudfront.net/${SPARK_BINARY_ARCHIVE_NAME}.tgz
+ARG SPARK_VERSION=2.2.1
+ARG SPARK_BINARY_ARCHIVE_NAME=spark-${2.2.1}-bin-without-hadoop
+ARG SPARK_BINARY_DOWNLOAD_URL=https://www.apache.org/dyn/closer.lua/spark/spark-${2.2.1}/spark-${2.2.1}-bin-without-hadoop.tgz
 
+
+ARG HADOOP_VERSION=3.0.0
+ARG HADOOP_BINARY_ARCHIVE_NAME=hadoop-${HADOOP_VERSION}
+ARG HADOOP_BINARY_DOWNLOAD_URL=http://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz
 # Configure env variables for Scala, SBT and Spark.
 # Also configure PATH env variable to include binary folders of Java, Scala, SBT and Spark.
 ENV SCALA_HOME  /usr/local/scala
@@ -33,9 +37,11 @@ RUN apt-get -yqq update && \
     wget -qO - ${SCALA_BINARY_DOWNLOAD_URL} | tar -xz -C /usr/local/ && \
     wget -qO - ${SBT_BINARY_DOWNLOAD_URL} | tar -xz -C /usr/local/  && \
     wget -qO - ${SPARK_BINARY_DOWNLOAD_URL} | tar -xz -C /usr/local/ && \
+    wget -qO - ${HADOOP_BINARY_DOWNLOAD_URL} | tar -xz -C /usr/local/ && \
     cd /usr/local/ && \
     ln -s ${SCALA_BINARY_ARCHIVE_NAME} scala && \
     ln -s ${SPARK_BINARY_ARCHIVE_NAME} spark && \
+    ln -s ${HADOOP_BINARY_ARCHIVE_NAME} hadoop && \
     cp spark/conf/log4j.properties.template spark/conf/log4j.properties && \
     sed -i -e s/WARN/ERROR/g spark/conf/log4j.properties && \
     sed -i -e s/INFO/ERROR/g spark/conf/log4j.properties
